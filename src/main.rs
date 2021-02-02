@@ -26,7 +26,7 @@ async fn kill(req: HttpRequest) -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(kill))
-        .bind("127.0.0.1:8090")?
+        .bind("0.0.0.0:8090")?
         .run()
         .await
 }
