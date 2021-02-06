@@ -1,7 +1,7 @@
-use actix_web::{get, post, web, App, HttpServer, Responder, HttpRequest};
+use actix_web::{post, App, HttpServer, Responder, HttpRequest};
 use std::process::Command;
-use std::net::{Ipv4Addr, IpAddr, SocketAddrV4};
-use std::str::FromStr;
+use std::net::{SocketAddrV4};
+use std::env;
 
 #[post("/kill")]
 async fn kill(req: HttpRequest) -> impl Responder {
@@ -25,8 +25,17 @@ async fn kill(req: HttpRequest) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+    if args.len() == 1 {
+        println!("port is required!");
+        println!("$ server-kill-switch 8099");
+        std::process::exit(1);
+    }
+
+    let port = &args[1];
+
     HttpServer::new(|| App::new().service(kill))
-        .bind("0.0.0.0:8090")?
+        .bind(format!("0.0.0.0:{}", port))?
         .run()
         .await
 }
